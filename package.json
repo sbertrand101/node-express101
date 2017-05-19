@@ -1,0 +1,27 @@
+{
+  "name": "node-express101",
+  "version": "1.0.0",
+  "description": "My first express Bandwidth",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'no tests yet'",
+    "start": "node index.js",
+    "hello": "echo 'world'"
+  },
+  "keywords": [
+    "bandwidth",
+    "node",
+    "intro",
+    "express",
+    "calling",
+    "texting",
+    "auto-response"
+  ],
+  "author": "Stephanie Bertrand",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "node-bandwidth": "^2.3.2"
+  }
+}
