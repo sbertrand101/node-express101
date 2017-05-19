@@ -71,7 +71,7 @@ var sendMesage = function(params){
 	return client.Message.send({
 		from : params.from,
 		to   : params.to,
-		text : "Bow down",
+		text : "Changing this sentence to Bey is Bae",
 		media: "http://i.huffpost.com/gen/5095340/thumbs/o-BEYONCE-GRAMMY-570.jpg"
 	})
 	.then(function(message){
