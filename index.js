@@ -10,9 +10,9 @@ var http = require("http").Server(app);
 var myBWNumber = process.env.BANDWDITH_PHONE_NUMBER;
 
 var client = new Bandwidth({
-	userId    : "process.env.BANDWIDTH_USER_ID", // <-- note, this is not the same as the username you used to login to the portal
-	apiToken  : "process.env.BANDWIDTH_API_TOKEN",
-	apiSecret : "process.env.BANDWIDTH_API_SECRET"
+	userId    : process.env.BANDWIDTH_USER_ID, // <-- note, this is not the same as the username you used to login to the portal
+	apiToken  : process.env.BANDWIDTH_API_TOKEN,
+	apiSecret : process.env.BANDWIDTH_API_SECRET
 });
 
 app.use(bodyParser.json());
