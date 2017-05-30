@@ -7,6 +7,8 @@ var app = express();
 var bodyParser = require("body-parser");
 var http = require("http").Server(app);
 
+var myBWNumber = process.env.BANDWDITH_PHONE_NUMBER;
+
 var client = new Bandwidth({
 	userId    : process.env.BANDWIDTH_USER_ID, // <-- note, this is not the same as the username you used to login to the portal
 	apiToken  : process.env.BANDWIDTH_API_TOKEN,
@@ -33,6 +35,59 @@ app.post("/message-callback", function(req, res){
 
 	}
 });
+
+app.post("/outbound-callbacks", function (req, res){
+	var body = req.body;
+	console.log(body);
+	if(checkIfAnswer(body.eventType)){
+		speakSentenceInCall(body.callId, "Hello from Bandwidth")
+		.then(function(response){
+			console.log(response);
+		})
+		.catch(function(error){
+			console.log(error);
+		})
+	}
+	else if (isSpeakingDone(body)){
+		client.Call.hangup(body.callId)
+		.then (function(){
+			console.log ("Hanging up call");
+		})
+		.catch (function(err){
+			console.log("Error hanging up the call, it was probably already over")
+			console.log("err")
+		});
+	}
+});
+
+app.post("/calls", function (req, res){
+	var callbackUrl = getBaseUrl(req) + "/outbound-callbacks";
+	var body = req.body;
+	console.log(body);
+	var phoneNumber = body.phoneNumber;
+	console.log(phoneNumber);
+	createCallWithCallback(phoneNumber, myBWNumber, callbackUrl)
+	.then(function(call){
+		console.log(call);
+		res.send(call).status(201);
+	})
+
+	.catch(function(err){
+		console.log("ERROR CREATING CALL");
+	})
+});
+
+var speakSentenceInCall = function (callId, sentence){
+	return client.Call.speakSentence(callId, sentence);
+}
+
+var checkIfAnswer = function(eventType){
+	return (eventType === "answer");
+}
+
+var isSpeakingDone = function (callBackEvent){
+	return (callBackEvent.eventType === "speak" && callBackEvent.state === "PLAYBACK_STOP");
+}
 
 app.post("/call-callback", function (req, res){
 	var body = req.body;
@@ -62,6 +117,20 @@ app.post("/call-callback", function (req, res){
 });
 
 
+var createCallWithCallback = function(toNumber, fromNumber, callbackUrl){
+	console.log("to: " + toNumber);
+	console.log("from: " + fromNumber);
+	return client.Call.create({
+		from: fromNumber,
+		to  : toNumber,
+		callbackUrl: callbackUrl
+	})
+};
+
+var getBaseUrl = function (req) {
+	return 'http://' + req.hostname;
+};
+
 var messagePrinter = function (message){
 	console.log('Using the message printer');
 	console.log(message);
@@ -85,21 +154,12 @@ var sendMesage = function(params){
 }
 
 var numbers = {
-	to   : "+18286385873",
-	from : "+18284498539"
+	to   : "", //YOUR PHONE #
+	from : "" //BANDWIDTH PHONE #
 };
 
-//sendMesage(numbers);
+sendMesage(numbers);
 
 http.listen(app.get('port'), function(){
     console.log('listening on *:' + app.get('port'));
 });
-
-
-
-
-
-
-
-
-
