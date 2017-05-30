@@ -10,9 +10,9 @@ var http = require("http").Server(app);
 var myBWNumber = process.env.BANDWDITH_PHONE_NUMBER;
 
 var client = new Bandwidth({
-	userId    : "u-h5pfhxsbwhwc5sg6inak3my", // <-- note, this is not the same as the username you used to login to the portal
-	apiToken  : "t-7fmk5furqa4lxkt6pkgdefq",
-	apiSecret : "vs6vzet3lakjf2mwju5bqga4otyy7frqoanmsiq"
+	userId    : "process.env.BANDWIDTH_USER_ID", // <-- note, this is not the same as the username you used to login to the portal
+	apiToken  : "process.env.BANDWIDTH_API_TOKEN",
+	apiSecret : "process.env.BANDWIDTH_API_SECRET"
 });
 
 app.use(bodyParser.json());
@@ -154,8 +154,8 @@ var sendMesage = function(params){
 }
 
 var numbers = {
-	to   : "+18286385873",
-	from : "+13365936477"
+	to   : "", //YOUR PHONE #
+	from : "" //BANDWIDTH PHONE #
 };
 
 sendMesage(numbers);
