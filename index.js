@@ -31,7 +31,7 @@ app.post("/message-callback", function(req, res){
 			to   : body.from,
 			from : body.to
 		}
-		sendMesage(numbers);
+		sendMessage(numbers);
 
 	}
 });
@@ -136,18 +136,38 @@ var messagePrinter = function (message){
 	console.log(message);
 }
 
-var sendMesage = function(params){
+var printThenFetch = function(message){
+	messagePrinter(message)
+	return client.Message.get(message.id);
+}
+
+
+sendMessage({})
+.then(keepgoing)
+.then(andkeepgoing)
+
+var sendMessage = function(params){
 	return client.Message.send({
 		from : params.from,
 		to   : params.to,
 		text : "Changing this sentence to Bey is Bae",
 		media: "http://i.huffpost.com/gen/5095340/thumbs/o-BEYONCE-GRAMMY-570.jpg"
 	})
-	.then(function(message){
-		messagePrinter(message);				//print message sent
-		return client.Message.get(message.id); 	//print message id
+	.then(printThenFetch)
+	.then(messagePrinter)
+	.then(function (result) {
+		return client.Call.hangup(randomCallId);
 	})
-	.then(messagePrinter)						//else, print error message
+
+
+	// .then(function(message){
+	// 	messagePrinter(message);				//print message sent
+	// 	return client.Message.get(message.id); 	//print message id
+	// })
+	.then(function (message){
+		messagePrinter(message);
+	})
+	//.then(messagePrinter)						//else, print error message
 	.catch(function(err){
 		console.log(err);
 	});
@@ -158,7 +178,7 @@ var numbers = {
 	from : "" //BANDWIDTH PHONE #
 };
 
-sendMesage(numbers);
+sendMessage(numbers);
 
 http.listen(app.get('port'), function(){
     console.log('listening on *:' + app.get('port'));
